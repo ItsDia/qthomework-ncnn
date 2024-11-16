@@ -1,0 +1,5 @@
+C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/CMakeFiles/yolov8-pose.dir
+C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/CMakeFiles/edit_cache.dir
+C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/CMakeFiles/rebuild_cache.dir
+C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/CMakeFiles/yolov8-pose_autogen_timestamp_deps.dir
+C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/CMakeFiles/yolov8-pose_autogen.dir

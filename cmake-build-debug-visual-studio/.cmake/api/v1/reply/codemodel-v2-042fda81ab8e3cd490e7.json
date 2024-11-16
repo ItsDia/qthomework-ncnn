@@ -1,0 +1,78 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Release-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.16"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "yolov8-pose",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "yolov8-pose::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-yolov8-pose-Release-411da5301b824c974b15.json",
+					"name" : "yolov8-pose",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "yolov8-pose_autogen::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-yolov8-pose_autogen-Release-2a4de7e8867c4f4510ac.json",
+					"name" : "yolov8-pose_autogen",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "yolov8-pose_autogen_timestamp_deps::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-yolov8-pose_autogen_timestamp_deps-Release-be27b162a8c1701348a1.json",
+					"name" : "yolov8-pose_autogen_timestamp_deps",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio",
+		"source" : "C:/Users/i4A/CLionProjects/untitled4"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

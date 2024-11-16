@@ -1,0 +1,25 @@
+"D:\CLion 2024.2.2\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/CLion 2024.2.2/bin/ninja/win/x64/ninja.exe" -G Ninja -S C:\Users\i4A\CLionProjects\untitled4 -B C:\Users\i4A\CLionProjects\untitled4\cmake-build-debug
+OpenMP found
+-- OpenCV ARCH: x64
+-- OpenCV RUNTIME: mingw
+-- OpenCV STATIC: OFF
+CMake Warning at D:/Opencv/opencv/build/OpenCVConfig.cmake:176 (message):
+  Found OpenCV Windows Pack but it has no binaries compatible with your
+  configuration.
+
+  You should manually point CMake variable OpenCV_DIR to your build of OpenCV
+  library.
+Call Stack (most recent call first):
+  CMakeLists.txt:81 (find_package)
+
+
+CMake Error at CMakeLists.txt:81 (find_package):
+  Found package configuration file:
+
+    D:/Opencv/opencv/build/OpenCVConfig.cmake
+
+  but it set OpenCV_FOUND to FALSE so package "OpenCV" is considered to be
+  NOT FOUND.
+
+
+-- Configuring incomplete, errors occurred!
