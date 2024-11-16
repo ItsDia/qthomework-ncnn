@@ -8,5 +8,5 @@ OpenMP found
 ncnn found
 -- Could NOT find WrapVulkanHeaders (missing: Vulkan_INCLUDE_DIR) 
 -- Configuring done (0.2s)
--- Generating done (0.0s)
+-- Generating done (0.1s)
 -- Build files have been written to: C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio

@@ -111,21 +111,32 @@ private slots:
         }
     }
 
-    //接受前端发送的请求,前端发送的是一个JSON,里面只有一个属性id
+    //接受前端发送的请求,前端发送的是一个JSON
     void onTextMessageReceived(QString message) {
         QWebSocket *client = qobject_cast<QWebSocket *>(sender());
         QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
         QJsonObject json = doc.object();
         int id = json["id"].toInt();
+        int tem = json["temperature"].toInt();
+        int woa = json["water"].toInt();
+        int lig = json["light"].toInt();
+        int noi = json["noise"].toInt();
+
         QSqlQuery query;
         query.exec(QString("select * from ComfortableForOlds where ID = %1").arg(id));
         if (query.next()) {
+            query.exec(QString("update ComfortableForOlds set Temperature = %1, Water = %2, Light = %3, Noise = %4 where ID = %5")
+                        .arg(tem)
+                        .arg(woa)
+                        .arg(lig)
+                        .arg(noi)
+                        .arg(id));
             QJsonObject json;
-            json["ID"] = query.value(0).toInt();
-            json["Temperature"] = query.value(1).toInt();
-            json["Water"] = query.value(2).toInt();
-            json["Light"] = query.value(3).toInt();
-            json["Noise"] = query.value(4).toInt();
+            json["ID"] = id;
+            json["Temperature"] = tem;
+            json["Water"] = woa;
+            json["Light"] = lig;
+            json["Noise"] = noi;
             QJsonDocument doc(json);
             QByteArray messageData = doc.toJson(QJsonDocument::Compact);
             client->sendTextMessage(messageData);
