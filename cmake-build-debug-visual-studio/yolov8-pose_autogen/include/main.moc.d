@@ -7,6 +7,7 @@ C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/yolov8-pose
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonDocument \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonObject \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QObject \
+  C:/Qt/6.7.3/msvc2019_64/include/QtCore/QRandomGenerator \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QSharedDataPointer \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QString \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QUrl \
@@ -99,6 +100,7 @@ C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/yolov8-pose
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qpair.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qpoint.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qprocessordetection.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtCore/qrandom.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qrect.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qrefcount.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qregularexpression.h \
@@ -185,6 +187,13 @@ C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/yolov8-pose
   C:/Qt/6.7.3/msvc2019_64/include/QtNetwork/qtnetwork-config.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtNetwork/qtnetworkexports.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtNetwork/qtnetworkglobal.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/QSqlDatabase \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/QSqlQuery \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/qsqldatabase.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/qsqlquery.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/qtsql-config.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/qtsqlexports.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtSql/qtsqlglobal.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtWebSockets/QWebSocket \
   C:/Qt/6.7.3/msvc2019_64/include/QtWebSockets/QWebSocketServer \
   C:/Qt/6.7.3/msvc2019_64/include/QtWebSockets/qtwebsocketsexports.h \

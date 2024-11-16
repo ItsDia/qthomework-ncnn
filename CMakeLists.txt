@@ -91,7 +91,7 @@ endif()
 
 # 设置 Qt 路径并查找
 set(CMAKE_PREFIX_PATH "C:/Qt/6.7.3/msvc2019_64")
-find_package(Qt6 COMPONENTS Core Network Gui WebSockets Multimedia REQUIRED)
+find_package(Qt6 COMPONENTS Core Network Gui WebSockets Sql REQUIRED)
 # 设置构建类型
 set(CMAKE_BUILD_TYPE Release)
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2")
@@ -126,7 +126,7 @@ target_link_libraries(
     Qt6::Network
     Qt6::Gui
     Qt6::WebSockets
-    Qt6::Multimedia
+    Qt6::Sql
     OpenMP::OpenMP_CXX
 )
 
