@@ -296,6 +296,10 @@ int Yolov8Pose::detect_yolov8(const cv::Mat& bgr, std::vector<Object>& objects)
 	non_max_suppression(proposals, objects,
 		img_h, img_w, hpad / 2, wpad / 2,
 		scale, scale, prob_threshold, nms_threshold);
+
+	for(auto& obj:objects) {
+		obj.is_fall = fall_estimate(obj.kps);
+	}
 	return 0;
 }
 
@@ -723,7 +727,7 @@ bool Yolov8Pose::fall_estimate(const std::vector<float>& kps)
 
 	// 1. 先获取哪些用于判断的点坐标
 	cv::Point L_shoulder = cv::Point((int)kps[5 * 3], (int)kps[5 * 3 + 1]);  // 左肩
-	float L_shoulder_confi = kps[5 * 3 + 2];  
+	float L_shoulder_confi = kps[5 * 3 + 2];
 	cv::Point R_shoulder = cv::Point((int)kps[6 * 3], (int)kps[6 * 3 + 1]);  // 右肩
 	float R_shoulder_confi = kps[6 * 3 + 2];
 	cv::Point C_shoulder = cv::Point((int)(L_shoulder.x + R_shoulder.x) / 2, (int)(L_shoulder.y + R_shoulder.y) / 2);  // 肩部中点

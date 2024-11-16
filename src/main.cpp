@@ -20,6 +20,7 @@
 #include <QImage>
 #include <QBuffer>
 #include <QByteArray>
+#include <QFile>
 
 #define YOLOV8_PARAM "C:/Users/i4A/CLionProjects/yolov8-pose-fall-detection/weights/yolov8-pose-human-opt.param"
 #define YOLOV8_BIN "C:/Users/i4A/CLionProjects/yolov8-pose-fall-detection/weights/yolov8-pose-human-opt.bin"
@@ -44,89 +45,27 @@ public:
         qDeleteAll(m_clients.begin(), m_clients.end());
     }
 
-    // void sendImage(const cv::Mat &image) {
-    //     // if (image.empty()) {
-    //     //     qWarning() << "图像数据为空，无法发送";
-    //     //     return;
-    //     // }
-    //     //
-    //     // // 输出图像的基本信息
-    //     // qDebug() << "图像大小:" << image.cols << "x" << image.rows;
-    //     // qDebug() << "通道数:" << image.channels();
-    //     // qDebug() << "数据类型:" << image.type();
-    //
-    //     cv::Mat rgbImage;
-    //     cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB); // 转换为RGB格式
-    //     QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
-    //     // if (qImage.isNull()) {
-    //     //     qWarning() << "QImage创建失败";
-    //     //     return;
-    //     // }
-    //
-    //     // 使用QImage::copy()创建一个独立的QImage对象
-    //     QImage copiedImage = qImage.copy();
-    //     if (copiedImage.isNull()) {
-    //         qWarning() << "QImage复制失败";
-    //         return;
-    //     }
-    //
-    //     // 尝试将QImage保存到文件以进行调试
-    //     if (!copiedImage.save("output_qimage.png")) { // 使用PNG格式
-    //         qWarning() << "无法将QImage保存到文件";
-    //     }
-    //
-    //     QByteArray byteArray;
-    //     QBuffer buffer(&byteArray);
-    //     if (!buffer.open(QIODevice::WriteOnly)) {
-    //         qWarning() << "无法打开QBuffer";
-    //         return;
-    //     }
-    //     if (!copiedImage.save(&buffer, "PNG")) { // 使用PNG格式
-    //         qWarning() << "无法将图像保存到QBuffer";
-    //         return;
-    //     }
-    //
-    //     QJsonObject json;
-    //     json["image"] = QString::fromLatin1(byteArray.toBase64().data());
-    //     QJsonDocument doc(json);
-    //     QByteArray message = doc.toJson(QJsonDocument::Compact);
-    //
-    //     // qDebug() << "发送的Base64图像数据:" << json["image"].toString().left(100) << "..."; // 仅输出前100个字符
-    //
-    //     for (QWebSocket *client : qAsConst(m_clients)) {
-    //         client->sendTextMessage(message);
-    //     }
-    // }
     void sendImage(const cv::Mat &image) {
-        if (image.empty()) {
-            qWarning() << "图像数据为空，无法发送";
-            return;
-        }
-
-        // 将图像从BGR转换为RGB格式
         cv::Mat rgbImage;
         cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
 
-        // 创建QImage对象
         QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
         if (qImage.isNull()) {
             qWarning() << "QImage创建失败";
             return;
         }
 
-        // 将QImage保存到QBuffer中
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
         if (!buffer.open(QIODevice::WriteOnly)) {
             qWarning() << "无法打开QBuffer";
             return;
         }
-        if (!qImage.save(&buffer, "PNG")) { // 使用PNG格式
+        if (!qImage.save(&buffer, "PNG")) {
             qWarning() << "无法将图像保存到QBuffer";
             return;
         }
 
-        // 创建JSON对象并发送
         QJsonObject json;
         json["image"] = QString::fromLatin1(byteArray.toBase64().data());
         QJsonDocument doc(json);
@@ -136,17 +75,29 @@ public:
             client->sendTextMessage(message);
         }
     }
+
+    void sendText() {
+        QFile file("fall.txt");
+        // 读取文件内容并发送到前端
+        if(file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            QString text = in.readAll();
+            file.close();
+            QJsonObject json;
+            json["text"] = text;
+            QJsonDocument doc(json);
+            QByteArray message = doc.toJson(QJsonDocument::Compact);
+
+            for (QWebSocket *client : qAsConst(m_clients)) {
+                client->sendTextMessage(message);
+            }
+        }
+    }
 private slots:
     void onNewConnection() {
         QWebSocket *socket = m_server->nextPendingConnection();
-        connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketServer::processTextMessage);
         connect(socket, &QWebSocket::disconnected, this, &WebSocketServer::socketDisconnected);
         m_clients << socket;
-    }
-
-    void processTextMessage(const QString &message) {
-        Q_UNUSED(message);
-        // 处理来自客户端的消息
     }
 
     void socketDisconnected() {
@@ -165,29 +116,16 @@ private:
 int main(int argc, char** argv) {
     QCoreApplication app(argc, argv);
 
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <image|video|camera>" << std::endl;
-        return -1;
-    }
-
     WebSocketServer server(114514);
 
     std::string inputType = argv[1];
 
-    if (inputType == "image") {
-        // 处理图像的代码保持不变
-    } else if (inputType == "video") {
-        // 处理视频文件的代码保持不变
-    } else if (inputType == "camera") {
+    if (inputType == "camera") {
         cv::VideoCapture cap(0); // 打开默认摄像头
         if (!cap.isOpened()) {
             std::cerr << "Could not open the camera." << std::endl;
             return -1;
         }
-
-        int frame_width = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_WIDTH));
-        int frame_height = static_cast<int>(cap.get(cv::CAP_PROP_FRAME_HEIGHT));
-        int fps = static_cast<int>(cap.get(cv::CAP_PROP_FPS));
 
 #ifdef Tracker
         BYTETracker tracker(fps, 50);  // 30
@@ -211,10 +149,20 @@ int main(int argc, char** argv) {
 #endif
             yolov8Pose->draw_fps(result);
 
-            // cv::imshow("Detection Result", result);
+            for(const auto& obj:objects) {
+                if(obj.is_fall) {
+                    // 用QFile记录文字
+                    QFile file("fall.txt");
+                    if(file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                        QTextStream out(&file);
+                        out << "检测到有人摔倒! 在 (" << obj.rect.x << ", " << obj.rect.y << ")";
+                        file.close();
+                    }
+                }
+            }
 
-            // 发送结果到前端
             server.sendImage(result);
+            server.sendText();
 
             if (cv::waitKey(30) == 'q') {
                 break;
@@ -224,11 +172,7 @@ int main(int argc, char** argv) {
         cap.release();
         cv::destroyAllWindows();
 
-    } else {
-        std::cerr << "Invalid input type. Please use 'image', 'video', or 'camera'." << std::endl;
-        return -1;
     }
-
     return app.exec();
 }
 

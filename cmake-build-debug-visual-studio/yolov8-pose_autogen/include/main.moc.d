@@ -2,6 +2,7 @@ C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/yolov8-pose
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QBuffer \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QByteArray \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QCoreApplication \
+  C:/Qt/6.7.3/msvc2019_64/include/QtCore/QFile \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QFlags \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonDocument \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonObject \
@@ -56,6 +57,8 @@ C:/Users/i4A/CLionProjects/untitled4/cmake-build-debug-visual-studio/yolov8-pose
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qendian.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qeventloop.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qexceptionhandling.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfile.h \
+  C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfiledevice.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qflags.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfloat16.h \
   C:/Qt/6.7.3/msvc2019_64/include/QtCore/qforeach.h \

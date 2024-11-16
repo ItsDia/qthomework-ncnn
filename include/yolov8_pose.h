@@ -96,6 +96,7 @@ struct Object
 	int label;
 	float prob;
 	std::vector<float> kps;
+    bool is_fall;
 };
 
 class Yolov8Pose

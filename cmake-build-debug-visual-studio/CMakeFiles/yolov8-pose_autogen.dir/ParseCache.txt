@@ -11,6 +11,7 @@ C:/Users/i4A/CLionProjects/untitled4/src/main.cpp
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QBuffer
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QByteArray
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QCoreApplication
+ mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QFile
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QFlags
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonDocument
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/QJsonObject
@@ -65,6 +66,8 @@ C:/Users/i4A/CLionProjects/untitled4/src/main.cpp
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qendian.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qeventloop.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qexceptionhandling.h
+ mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfile.h
+ mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfiledevice.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qflags.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qfloat16.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtCore/qforeach.h
