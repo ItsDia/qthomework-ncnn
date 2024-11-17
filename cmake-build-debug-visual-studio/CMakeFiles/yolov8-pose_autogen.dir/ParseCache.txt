@@ -196,8 +196,10 @@ C:/Users/i4A/CLionProjects/untitled4/src/main.cpp
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtNetwork/qtnetworkexports.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtNetwork/qtnetworkglobal.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/QSqlDatabase
+ mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/QSqlError
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/QSqlQuery
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/qsqldatabase.h
+ mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/qsqlerror.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/qsqlquery.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/qtsql-config.h
  mdp:C:/Qt/6.7.3/msvc2019_64/include/QtSql/qtsqlexports.h

@@ -24,6 +24,7 @@
 #include <QRandomGenerator>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlError>
 
 #define YOLOV8_PARAM "C:/Users/i4A/CLionProjects/yolov8-pose-fall-detection/weights/yolov8-pose-human-opt.param"
 #define YOLOV8_BIN "C:/Users/i4A/CLionProjects/yolov8-pose-fall-detection/weights/yolov8-pose-human-opt.bin"
@@ -49,33 +50,53 @@ public:
     }
 
     void sendImage(const cv::Mat &image) {
+        // cv::Mat rgbImage;
+        // cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
+        //
+        // QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
+        // if (qImage.isNull()) {
+        //     qWarning() << "QImage创建失败";
+        //     return;
+        // }
+        //
+        // QByteArray byteArray;
+        // QBuffer buffer(&byteArray);
+        // if (!buffer.open(QIODevice::WriteOnly)) {
+        //     qWarning() << "无法打开QBuffer";
+        //     return;
+        // }
+        // if (!qImage.save(&buffer, "PNG")) {
+        //     qWarning() << "无法将图像保存到QBuffer";
+        //     return;
+        // }
+        //
+        // QJsonObject json;
+        // json["image"] = QString::fromLatin1(byteArray.toBase64().data());
+        // QJsonDocument doc(json);
+        // QByteArray message = doc.toJson(QJsonDocument::Compact);
+        //
+        // for (QWebSocket *client : qAsConst(m_clients)) {
+        //     client->sendTextMessage(message);
+        // }
         cv::Mat rgbImage;
         cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
 
         QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
+
         if (qImage.isNull()) {
-            qWarning() << "QImage创建失败";
+            qWarning() << "Failed to create QImage from OpenCV Mat.";
             return;
         }
 
+        // 优化：发送二进制图像数据
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
-        if (!buffer.open(QIODevice::WriteOnly)) {
-            qWarning() << "无法打开QBuffer";
-            return;
-        }
-        if (!qImage.save(&buffer, "PNG")) {
-            qWarning() << "无法将图像保存到QBuffer";
-            return;
-        }
-
-        QJsonObject json;
-        json["image"] = QString::fromLatin1(byteArray.toBase64().data());
-        QJsonDocument doc(json);
-        QByteArray message = doc.toJson(QJsonDocument::Compact);
-
-        for (QWebSocket *client : qAsConst(m_clients)) {
-            client->sendTextMessage(message);
+        if (buffer.open(QIODevice::WriteOnly) && qImage.save(&buffer, "PNG")) {
+            for (QWebSocket *client : qAsConst(m_clients)) {
+                client->sendBinaryMessage(byteArray);
+            }
+        } else {
+            qWarning() << "Failed to save QImage to buffer.";
         }
     }
 
@@ -113,9 +134,33 @@ private slots:
 
     //接受前端发送的请求,前端发送的是一个JSON
     void onTextMessageReceived(QString message) {
-        QWebSocket *client = qobject_cast<QWebSocket *>(sender());
-        QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
-        QJsonObject json = doc.object();
+    QWebSocket *client = qobject_cast<QWebSocket *>(sender());
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8());
+    QJsonObject json = doc.object();
+
+    QString type = json["type"].toString();
+
+    if (type == "login") {
+        QString username = json["user"].toString();
+        QString password = json["password"].toString();
+
+        QSqlQuery query;
+        query.prepare("select * from User where NAME = :name and PASSWORD = :password");
+        query.bindValue(":name", username);
+        query.bindValue(":password", password);
+
+        if (query.exec() && query.next()) {
+            QJsonObject response;
+            response["status"] = "success";
+            QJsonDocument responseDoc(response);
+            client->sendTextMessage(responseDoc.toJson(QJsonDocument::Compact));
+        } else {
+            QJsonObject response;
+            response["status"] = "failure";
+            QJsonDocument responseDoc(response);
+            client->sendTextMessage(responseDoc.toJson(QJsonDocument::Compact));
+        }
+    } else if (type == "update") {
         int id = json["id"].toInt();
         int tem = json["temperature"].toInt();
         int woa = json["water"].toInt();
@@ -131,7 +176,9 @@ private slots:
                         .arg(lig)
                         .arg(noi)
                         .arg(id));
+            qDebug() << query.lastError();
             QJsonObject json;
+            json["status"] = "success";
             json["ID"] = id;
             json["Temperature"] = tem;
             json["Water"] = woa;
@@ -140,6 +187,8 @@ private slots:
             QJsonDocument doc(json);
             QByteArray messageData = doc.toJson(QJsonDocument::Compact);
             client->sendTextMessage(messageData);
+            cout << "UPDATE DATA TO ComfortableForOlds" << messageData << endl;
+
         } else {
             int temperature = QRandomGenerator::global()->bounded(10, 30);
             int water = QRandomGenerator::global()->bounded(0, 100);
@@ -151,6 +200,7 @@ private slots:
                         .arg(light)
                         .arg(noise));
             QJsonObject json;
+            json["status"] = "success";
             json["ID"] = query.lastInsertId().toInt();
             json["Temperature"] = temperature;
             json["Water"] = water;
@@ -159,9 +209,38 @@ private slots:
             QJsonDocument doc(json);
             QByteArray messageData = doc.toJson(QJsonDocument::Compact);
             client->sendTextMessage(messageData);
+            cout << "INSERT DATA TO ComfortableForOlds" << messageData << endl ;
         }
     }
-
+    else if (type=="query") {
+        //QJsonObject({"id":"2","type":"query"})
+        QString idStr = json["id"].toString();
+        int id = idStr.toInt();
+        qDebug() << json << "id:" << id;
+        QSqlQuery query;
+        query.exec(QString("select * from ComfortableForOlds where ID = %1").arg(id));
+        if (query.next()) {
+            QJsonObject json;
+            json["status"] = "success";
+            json["ID"] = id;
+            json["Temperature"] = query.value(1).toInt();
+            json["Water"] = query.value(2).toInt();
+            json["Light"] = query.value(3).toInt();
+            json["Noise"] = query.value(4).toInt();
+            QJsonDocument doc(json);
+            QByteArray messageData = doc.toJson(QJsonDocument::Compact);
+            client->sendTextMessage(messageData);
+            cout << "SUCCEED QUERY DATA FROM ComfortableForOlds" << messageData << endl;
+        } else {
+            QJsonObject json;
+            json["status"] = "failure";
+            QJsonDocument doc(json);
+            QByteArray messageData = doc.toJson(QJsonDocument::Compact);
+            client->sendTextMessage(messageData);
+            cout << "FAILED QUERY DATA FROM ComfortableForOlds" << messageData;
+        }
+    }
+}
 private:
     QWebSocketServer *m_server;
     QList<QWebSocket *> m_clients;
