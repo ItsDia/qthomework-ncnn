@@ -49,37 +49,64 @@ public:
         qDeleteAll(m_clients.begin(), m_clients.end());
     }
 
+    // void sendImage(const cv::Mat &image) {
+    //     // cv::Mat rgbImage;
+    //     // cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
+    //     //
+    //     // QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
+    //     // if (qImage.isNull()) {
+    //     //     qWarning() << "QImage创建失败";
+    //     //     return;
+    //     // }
+    //     //
+    //     // QByteArray byteArray;
+    //     // QBuffer buffer(&byteArray);
+    //     // if (!buffer.open(QIODevice::WriteOnly)) {
+    //     //     qWarning() << "无法打开QBuffer";
+    //     //     return;
+    //     // }
+    //     // if (!qImage.save(&buffer, "PNG")) {
+    //     //     qWarning() << "无法将图像保存到QBuffer";
+    //     //     return;
+    //     // }
+    //     //
+    //     // QJsonObject json;
+    //     // json["image"] = QString::fromLatin1(byteArray.toBase64().data());
+    //     // QJsonDocument doc(json);
+    //     // QByteArray message = doc.toJson(QJsonDocument::Compact);
+    //     //
+    //     // for (QWebSocket *client : qAsConst(m_clients)) {
+    //     //     client->sendTextMessage(message);
+    //     // }
+    //     cv::Mat rgbImage;
+    //     cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
+    //
+    //     QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
+    //
+    //     if (qImage.isNull()) {
+    //         qWarning() << "Failed to create QImage from OpenCV Mat.";
+    //         return;
+    //     }
+    //
+    //     // 优化：发送二进制图像数据
+    //     QByteArray byteArray;
+    //     QBuffer buffer(&byteArray);
+    //     if (buffer.open(QIODevice::WriteOnly) && qImage.save(&buffer, "PNG")) {
+    //         for (QWebSocket *client : qAsConst(m_clients)) {
+    //             client->sendBinaryMessage(byteArray);
+    //         }
+    //     } else {
+    //         qWarning() << "Failed to save QImage to buffer.";
+    //     }
+    // }
     void sendImage(const cv::Mat &image) {
-        // cv::Mat rgbImage;
-        // cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
-        //
-        // QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
-        // if (qImage.isNull()) {
-        //     qWarning() << "QImage创建失败";
-        //     return;
-        // }
-        //
-        // QByteArray byteArray;
-        // QBuffer buffer(&byteArray);
-        // if (!buffer.open(QIODevice::WriteOnly)) {
-        //     qWarning() << "无法打开QBuffer";
-        //     return;
-        // }
-        // if (!qImage.save(&buffer, "PNG")) {
-        //     qWarning() << "无法将图像保存到QBuffer";
-        //     return;
-        // }
-        //
-        // QJsonObject json;
-        // json["image"] = QString::fromLatin1(byteArray.toBase64().data());
-        // QJsonDocument doc(json);
-        // QByteArray message = doc.toJson(QJsonDocument::Compact);
-        //
-        // for (QWebSocket *client : qAsConst(m_clients)) {
-        //     client->sendTextMessage(message);
-        // }
+        // 如果图像数据是 BGR 格式，可以直接转换为 RGB，避免不必要的转换
         cv::Mat rgbImage;
-        cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);
+        if (image.channels() == 3 && image.type() == CV_8UC3) {
+            cv::cvtColor(image, rgbImage, cv::COLOR_BGR2RGB);  // 将BGR转为RGB
+        } else {
+            rgbImage = image;  // 如果已经是RGB格式则直接使用
+        }
 
         QImage qImage(rgbImage.data, rgbImage.cols, rgbImage.rows, rgbImage.step, QImage::Format_RGB888);
 
@@ -88,15 +115,18 @@ public:
             return;
         }
 
-        // 优化：发送二进制图像数据
         QByteArray byteArray;
         QBuffer buffer(&byteArray);
-        if (buffer.open(QIODevice::WriteOnly) && qImage.save(&buffer, "PNG")) {
+        if (buffer.open(QIODevice::WriteOnly)) {
+            if (!qImage.save(&buffer, "JPEG")) {
+                qWarning() << "Failed to save QImage to buffer.";
+                return;
+            }
             for (QWebSocket *client : qAsConst(m_clients)) {
-                client->sendBinaryMessage(byteArray);
+                client->sendBinaryMessage(byteArray);  // 发送JPEG二进制数据
             }
         } else {
-            qWarning() << "Failed to save QImage to buffer.";
+            qWarning() << "Failed to open QBuffer.";
         }
     }
 
@@ -277,7 +307,8 @@ int main(int argc, char** argv) {
     std::string inputType = argv[1];
 
     if (inputType == "camera") {
-        cv::VideoCapture cap(0); //DEFAULT CAMERA
+        cv::VideoCapture cap(0);
+        //DEFAULT CAMERA
         if (!cap.isOpened()) {
             std::cerr << "COULD NOT OPEN THE CAMERA" << std::endl;
             return -1;
@@ -320,6 +351,7 @@ int main(int argc, char** argv) {
                 }
             }
 
+            cv::imshow("result", result);
             server.sendImage(result);
             server.sendText();
 
